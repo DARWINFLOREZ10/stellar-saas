@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// SQLite connector doesn't support native enums; use strings instead.
+
+model User {
+  id          String       @id @default(uuid())
+  email       String       @unique
+  password    String
+  name        String?
+  role        String       @default("USER")
+  projects    Project[]
+  memberships Membership[]
+  createdAt   DateTime     @default(now())
+}
+
+model Organization {
+  id          String       @id @default(uuid())
+  name        String
+  memberships Membership[]
+  createdAt   DateTime     @default(now())
+}
+
+model Membership {
+  id             String       @id @default(uuid())
+  user           User         @relation(fields: [userId], references: [id])
+  userId         String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  role           String       @default("MEMBER")
+  createdAt      DateTime     @default(now())
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  createdAt   DateTime @default(now())
+}

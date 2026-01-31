@@ -2,12 +2,16 @@
   "name": "stellar-saas-backend",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "tsc && node dist/server.js",
     "build": "tsc",
     "start": "node dist/server.js",
-    "seed": "node --loader ts-node/esm prisma/seed.ts",
+    "seed": "ts-node prisma/seed.ts",
+    "prisma:generate:sqlite": "prisma generate --schema prisma/schema.sqlite.prisma",
+    "prisma:migrate:sqlite": "prisma migrate dev --name init --schema prisma/schema.sqlite.prisma",
+    "seed:sqlite": "ts-node prisma/seed.ts",
+    "dev:sqlite": "npm run prisma:generate:sqlite && npm run prisma:migrate:sqlite && npm run seed:sqlite && npm run build && node dist/server.js",
     "test": "jest"
   },
   "dependencies": {
